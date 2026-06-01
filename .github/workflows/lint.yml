@@ -1,0 +1,64 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run markdownlint
+        run: npm run lint:md
+
+      - name: Check image sizes
+        run: |
+          MAX_SIZE=500000
+          oversized=""
+          for img in images/**/*; do
+            if [ -f "$img" ]; then
+              size=$(stat -c%s "$img" 2>/dev/null || stat -f%z "$img" 2>/dev/null)
+              if [ "$size" -gt "$MAX_SIZE" ]; then
+                oversized="$oversized\n  $img ($(( size / 1024 ))KB)"
+              fi
+            fi
+          done
+          if [ -n "$oversized" ]; then
+            echo "::warning::Oversized images found (>500KB):$oversized"
+          fi
+
+  test-scripts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install dependencies
+        run: uv sync --dev
+        working-directory: scripts
+
+      - name: Run tests
+        run: uv run pytest --cov --cov-report=term-missing
+        working-directory: scripts

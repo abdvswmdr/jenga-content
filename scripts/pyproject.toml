@@ -1,0 +1,28 @@
+[project]
+name = "jenga-content-cli"
+version = "0.1.0"
+description = "Cross-post CLI for jenga-content (Dev.to)"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28.1",
+    "pillow>=11.0",
+    "python-frontmatter>=1.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "respx>=0.22",
+    "pytest-cov>=6.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-p no:launch_pytest"
+
+[tool.coverage.run]
+source = ["."]
+omit = [".venv/*", "tests/*"]
+
+[tool.coverage.report]
+fail_under = 80
