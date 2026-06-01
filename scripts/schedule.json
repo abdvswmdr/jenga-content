@@ -1,4 +1,11 @@
 {
   "post_time_utc": "07:00",
-  "articles": []
+  "articles": [
+    {
+      "date": "2026-06-01",
+      "file": "posts/careerjet-api-public-means-publisher.md",
+      "devto": null,
+      "cover_image": "https://raw.githubusercontent.com/abdvswmdr/jenga-content/main/images/covers/careerjet-api-public-means-publisher.png"
+    }
+  ]
 }

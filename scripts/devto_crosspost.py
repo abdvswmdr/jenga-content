@@ -3,9 +3,9 @@
 Run manually or via GitHub Actions cron at 07:00 UTC.
 
 Usage:
-    python devto_crosspost.py              # Post due articles
-    python devto_crosspost.py --dry-run    # Preview without posting
-    python devto_crosspost.py --status     # Show schedule status
+    python3 devto_crosspost.py              # Post due articles
+    python3 devto_crosspost.py --dry-run    # Preview without posting
+    python3 devto_crosspost.py --status     # Show schedule status
 """
 
 from __future__ import annotations
