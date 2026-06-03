@@ -59,10 +59,82 @@ Dev session with Gemini / Claude Code / Qwen
         ↓
 article-drafter agent  →  drafts/ outline approved → full draft
         ↓
-/jenga-writer checklist  →  anti-AI-slop pass
+/jenga-writer checklist  →  anti-AI-slop pass, draft: false, move to posts/
         ↓
-posts/  →  Dev.to  →  LinkedIn  →  Reddit
+generate cover image (scripts/generate_cover.py)
+        ↓
+register in schedule.json (scripts/plan_schedule.py --merge)
+        ↓
+dry-run crosspost (scripts/devto_crosspost.py --dry-run)
+        ↓
+Dev.to  →  LinkedIn  →  Reddit
 ```
+
+---
+
+## Publishing to Dev.to
+
+**1. Generate the cover image**
+
+```bash
+python3 scripts/generate_cover.py posts/your-article-slug.md
+# outputs: images/covers/your-article-slug.png
+```
+
+Or regenerate all posts missing covers:
+
+```bash
+python3 scripts/generate_cover.py --all
+```
+
+Push the cover to GitHub before posting — Dev.to loads it from the raw GitHub URL.
+
+**2. Register the article in the schedule**
+
+```bash
+python3 scripts/plan_schedule.py \
+  --start 2026-06-01 \
+  --slugs "your-article-slug" \
+  --merge
+```
+
+Default cadence is Tuesday/Thursday. Override with `--cadence mon,wed,fri`. For a single article you want posted today, pass today's date as `--start`.
+
+You can also edit `scripts/schedule.json` directly — add an entry under `articles`:
+
+```json
+{
+  "date": "2026-06-01",
+  "file": "posts/your-article-slug.md",
+  "devto": null,
+  "cover_image": "https://raw.githubusercontent.com/abdvswmdr/jenga-content/main/images/covers/your-article-slug.png"
+}
+```
+
+**3. Dry-run to confirm**
+
+```bash
+python3 scripts/devto_crosspost.py --status   # see what's due
+python3 scripts/devto_crosspost.py --dry-run  # preview without posting
+```
+
+**4. Set your API key**
+
+Create `scripts/.env` (never commit this file):
+
+```
+DEVTO_API_KEY=your_key_here
+```
+
+Get your key from [dev.to/settings/extensions](https://dev.to/settings/extensions) → DEV Community API Keys.
+
+**5. Post**
+
+```bash
+python3 scripts/devto_crosspost.py
+```
+
+`schedule.json` is updated with the Dev.to URL on success.
 
 ---
 
